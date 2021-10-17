@@ -3,4 +3,23 @@
   roles:
     - ansible-role-logrotate
   vars:
-    logrotate_config: ""
+    logrotate_cron_entry:
+      minute: 0
+      name: logrotate
+      job: "logrotate {{ logrotate_conf_file }} >/dev/null"
+      state: present
+
+    logrotate_config: |
+      create
+      compress
+      delaycompress
+      {% if ansible_os_family == 'FreeBSD' or ansible_os_family == 'OpenBSD' %}
+      su root wheel
+      {% else %}
+      su root syslog
+      {% endif %}
+      rotate 30
+      daily
+      dateext
+      dateformat .%Y%m%d
+      include {{ logrotate_conf_d_dir }}

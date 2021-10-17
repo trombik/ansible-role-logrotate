@@ -1,37 +1,40 @@
 ---
 # tasks file for ansible-role-logrotate
 
-- include_vars: "{{ ansible_os_family }}.yml"
+- name: "Include {{ ansible_os_family }}.yml"
+  include_vars: "{{ ansible_os_family }}.yml"
 
-- include: "install-{{ ansible_os_family }}.yml"
+- name: "Include install-{{ ansible_os_family }}.yml"
+  include: "install-{{ ansible_os_family }}.yml"
 
-- name: Create log directory
-  file:
-    path: "{{ logrotate_log_dir }}"
-    mode: 0755
-    owner: "{{ logrotate_user }}"
-    group: "{{ logrotate_group }}"
+- name: Create logrotate_conf_d_dir
+  ansible.builtin.file:
+    path: "{{ logrotate_conf_d_dir }}"
+    mode: "0755"
     state: directory
-  notify: Restart logrotate
-
-- name: Create db directory
-  file:
-    path: "{{ logrotate_db_dir }}"
-    mode: 0755
-    owner: "{{ logrotate_user }}"
-    group: "{{ logrotate_group }}"
-    state: directory
-  notify: Restart logrotate
 
 - name: Create logrotate.conf
-  template:
+  ansible.builtin.template:
     src: logrotate.conf.j2
     dest: "{{ logrotate_conf_file }}"
-    validate: echo %s
-  notify: Restart logrotate
+    mode: "0644"
 
-- name: Start logrotate
-  service:
-    name: "{{ logrotate_service }}"
-    enabled: true
-    state: started
+- name: Create cron entry for logrotate
+  ansible.builtin.cron:
+    backup: "{{ logrotate_cron_entry['backup'] | default(omit) }}"
+    cron_file: "{{ logrotate_cron_entry['cron_file'] | default(omit) }}"
+    day: "{{ logrotate_cron_entry['day'] | default(omit) }}"
+    disabled: "{{ logrotate_cron_entry['disabled'] | default(omit) }}"
+    env: "{{ logrotate_cron_entry['env'] | default(omit) }}"
+    hour: "{{ logrotate_cron_entry['hour'] | default(omit) }}"
+    insertafter: "{{ logrotate_cron_entry['insertafter'] | default(omit) }}"
+    insertbefore: "{{ logrotate_cron_entry['insertbefore'] | default(omit) }}"
+    job: "{{ logrotate_cron_entry['job'] | default(omit) }}"
+    minute: "{{ logrotate_cron_entry['minute'] | default(omit) }}"
+    month: "{{ logrotate_cron_entry['month'] | default(omit) }}"
+    name: "{{ logrotate_cron_entry['name'] | default(omit) }}"
+    reboot: "{{ logrotate_cron_entry['reboot'] | default(omit) }}"
+    special_time: "{{ logrotate_cron_entry['special_time'] | default(omit) }}"
+    state: "{{ logrotate_cron_entry['state'] | default(omit) }}"
+    user: "{{ logrotate_cron_entry['user'] | default(omit) }}"
+    weekday: "{{ logrotate_cron_entry['weekday'] | default(omit) }}"

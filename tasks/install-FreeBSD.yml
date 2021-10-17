@@ -1,6 +1,6 @@
 ---
 
 - name: Install logrotate
-  pkgng:
-    name: logrotate
+  ansible.builtin.pkgng:
+    name: "{{ logrotate_package }}"
     state: present
