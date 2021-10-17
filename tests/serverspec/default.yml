@@ -1,7 +1,28 @@
 ---
 - hosts: localhost
+  pre_tasks:
+    - name: Create /var/log/compress.log
+      ansible.builtin.file:
+        path: /var/log/compress.log
+        state: touch
+      changed_when: false
   roles:
     - ansible-role-logrotate
+  post_tasks:
+    - name: Rotate compress.log
+      logrotate:
+        name: compress
+        files:
+          - /var/log/compress.log
+        delaycompress: yes
+        compress: yes
+        frequency: daily
+        copytruncate: yes
+        compresscmd: "{{ project_bzip2_path }}"
+        uncompresscmd: "{{ project_bunzip2_path }}"
+        compressext: .bz2
+        config_dir: "{{ logrotate_conf_d_dir }}"
+        state: present
   vars:
     logrotate_cron_entry:
       minute: 0
@@ -23,3 +44,15 @@
       dateext
       dateformat .%Y%m%d
       include {{ logrotate_conf_d_dir }}
+
+    os_project_bzip2_path:
+      FreeBSD: /usr/bin/bzip2
+      Debian: /bin/bzip2
+      RedHat: /bin/bzip2
+    project_bzip2_path: "{{ os_project_bzip2_path[ansible_os_family] }}"
+
+    os_project_bunzip2_path:
+      FreeBSD: /usr/bin/bunzip2
+      Debian: /bin/bunzip2
+      RedHat: /bin/bunzip2
+    project_bunzip2_path: "{{ os_project_bunzip2_path[ansible_os_family] }}"
