@@ -1,0 +1,6 @@
+---
+
+- name: Install logrotate
+  pkgng:
+    name: logrotate
+    state: present

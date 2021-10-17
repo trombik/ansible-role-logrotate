@@ -1,0 +1,9 @@
+---
+logrotate_user: logrotate
+logrotate_group: logrotate
+logrotate_log_dir: /var/log/logrotate
+logrotate_db_dir: "{{ __logrotate_db_dir }}"
+logrotate_service: logrotate
+logrotate_conf_dir: "{{ __logrotate_conf_dir }}"
+logrotate_conf_file: "{{ __logrotate_conf_dir }}/logrotate.conf"
+logrotate_flags: ""
