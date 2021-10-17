@@ -1,0 +1,6 @@
+---
+
+- name: Install logrotate
+  ansible.builtin.apt:
+    name: "{{ logrotate_package }}"
+    state: present

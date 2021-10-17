@@ -1,0 +1,3 @@
+---
+__logrotate_package: logrotate
+__logrotate_conf_dir: /etc
