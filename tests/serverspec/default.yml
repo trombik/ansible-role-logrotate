@@ -36,10 +36,8 @@
       delaycompress
       {% if ansible_os_family == 'FreeBSD' or ansible_os_family == 'OpenBSD' %}
       su root wheel
-      {% elif ansible_distribution == 'Devuan' %}
+      {% elif ansible_os_family == 'Debian' %}
       su root adm
-      {% else %}
-      su root syslog
       {% endif %}
       rotate 30
       daily
